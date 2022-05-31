@@ -26,10 +26,12 @@ public class DataExtractor {
 
     private final PrintStream _out;
     private final URI _url;
+    private final HttpClient _httpClient;
 
-    public DataExtractor(PrintStream out, String url) throws URISyntaxException {
+    public DataExtractor(PrintStream out, String url, HttpClient httpClient) throws URISyntaxException {
         _out = out;
         _url = new URI(url);
+        _httpClient = httpClient;
     }
 
     public List<PodCastItem> GetItemsToDownload() throws ParserConfigurationException, IOException, SAXException, InterruptedException {
@@ -46,10 +48,9 @@ public class DataExtractor {
     }
 
     private String GetXML() throws IOException, InterruptedException {
-        var httpClient = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder(_url).GET().build();
 
-        HttpResponse<String> response= httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response= _httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         return response.body();
     }
